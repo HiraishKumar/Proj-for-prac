@@ -5,17 +5,17 @@ def Encrypter(initial_string:str,cypher:int=3)-> str:
     '''
     encrypt=''    
     string_base=[i for i in (string.ascii_letters+string.digits+' ')]
-    #'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 '
-    for letter in initial_string:
-        new_letter_index=string_base.index(letter)+cypher
-        if new_letter_index>=len(string_base)-1:
-            if letter in string_base:
+    #'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 '          
+    for letter in initial_string:        
+        if letter in string_base:
+            new_letter_index=string_base.index(letter)+cypher
+            if new_letter_index>=len(string_base)-1:
                 new_letter_index-=len(string_base)
                 encrypt+=string_base[new_letter_index]
             else:
-                pass
+                encrypt+=string_base[new_letter_index]
         else:
-            encrypt+=string_base[new_letter_index]
+            encrypt+=letter    
 
     return encrypt   
  
@@ -27,14 +27,16 @@ def Decrypter(initial_string:str,cypher:int=3)-> str:
     decrypt=''
     string_base=[i for i in (string.ascii_letters+string.digits+' ')]
     #'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 '
-    for letter in initial_string:        
-        new_letter_index=string_base.index(letter)-cypher
-        decrypt+=string_base[new_letter_index]
-            
+    for letter in initial_string:   
+        if letter in string_base:     
+            new_letter_index=string_base.index(letter)-cypher
+            decrypt+=string_base[new_letter_index]
+        else:
+            decrypt+=letter
     return decrypt
 
-import pandas as pd
-df = pd.read_csv('password_database.csv')
 
-df.loc[:, 'Password'] = Encrypter(df.loc[:, 'Password'])
-df.head(10)
+a = Encrypter("G@m3OnNow")
+b = Decrypter(a)
+print(a)
+print(b)
