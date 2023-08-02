@@ -47,7 +47,7 @@ def Decrypter(initial_string:str,cypher:int=3)-> str:
 def Filter(_colomn_name_:str,_Entry_name:str)->list:
     '''returns a filtered Pd.DataFrame based with the Name of entries in the website colomn'''
     return df[df[_colomn_name_] == _Entry_name]
-def Zipper(colomn_1:str,Colomn_2:str,_Site_Name:str)->list:  
+def Zipper(colomn_1:str,Colomn_2:str,_Site_Name)->list:  
     '''filtering(on the basis of site name) and zipping(of specified 
     {colomn_1 and colomn_2}) into a paired list)'''
     filtered_df=Filter('Website',_Site_Name)  
