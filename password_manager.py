@@ -1,34 +1,15 @@
 import string
 import pandas as pd
 df = pd.read_csv(r'D:\python\Projects\Encrypted_password_database .csv')
-# def Unique_Element_Finder(colomn_name:str,colomn_index:int)->list:
-'''Returns the list of unique elemets in a colomn(identified by its {colomn_name} and {colomn_index}) of a pandas datafram '''
-Unique_Website_list=[]
-for i in [df.iloc[i,0] for i in range(len(df['Facebook.com']))]:
-    if i in Unique_Website_list:
-        pass
+
+def Unique_element(colomn_name:str,Enumer:int=None)->list:
+    '''returns list of unique elements in a colomn {colomn_name} 
+    of pd.DataFrame which are enumerated if a starting enumer is specified'''
+    if Enumer != None:
+        Unique_element_list=[(j,i) for j, i in enumerate(df[colomn_name].unique(),start=Enumer)]
     else:
-        Unique_Website_list.append(i)
-            
-    # return Unique_Website_list
-print(Unique_Website_list)
-
-# def Unique_Element_Finder(df: pd.DataFrame, column_name: str) -> list:
-#     '''Returns the list of unique elements in a column (identified by its {column_name}) of a pandas DataFrame.'''
-#     unique_elements_list = [df[column_name].unique().tolist()]
-#     return unique_elements_list
-
-# def Unique_Element_Finder(df: pd.DataFrame, column_index: int) -> list:
-#     '''Returns the list of unique elements in a column (identified by its {column_index}) of a pandas DataFrame.'''
-#     unique_elements_list = df.iloc[:, column_index].unique().tolist()
-#     return unique_elements_list
-
-
-
-
-Website_name='Facebook.com'
-filtered_df = df[df['Website'] == Website_name]
-
+        Unique_element_list=[i for i in df[colomn_name].unique()]                
+    return Unique_element_list
 def Encrypter(initial_string:str,cypher:int=3)-> str:
     '''
     shift the postion of the element in the string base {cypher} No. of times
@@ -47,7 +28,7 @@ def Encrypter(initial_string:str,cypher:int=3)-> str:
         else:
             encrypt+=letter    
 
-    return encrypt   
+    return encrypt
 def Decrypter(initial_string:str,cypher:int=3)-> str:
     '''
     shift the postion of the element in the string base BACK {cypher} No. of times
@@ -63,19 +44,67 @@ def Decrypter(initial_string:str,cypher:int=3)-> str:
         else:
             decrypt+=letter
     return decrypt
+def Filter(_colomn_name_:str,_Entry_name:str)->list:
+    '''returns a filtered Pd.DataFrame based with the Name of entries in the website colomn'''
+    return df[df[_colomn_name_] == _Entry_name]
+def Zipper(colomn_1:str,Colomn_2:str,_Site_Name:str)->list:  
+    '''filtering(on the basis of site name) and zipping(of specified 
+    {colomn_1 and colomn_2}) into a paired list)'''
+    filtered_df=Filter('Website',_Site_Name)  
+    lst1=[filtered_df.iloc[i,1] for i in range(len(filtered_df[colomn_1]))]
+    lst2=[filtered_df.iloc[i,2] for i in range(len(filtered_df[Colomn_2]))]
+    return list(zip(lst1,lst2))
 
 
-lst1=[filtered_df.iloc[i,1] for i in range(len(filtered_df['Username']))]
-lst2=[Decrypter(filtered_df.iloc[i,2]) for i in range(len(filtered_df['Password']))]
+Enumer_site=Unique_element('Website',1)
+#make the initaial display of websites in stre
+for i in Enumer_site:
+    print(*i)
+
+#user input of which website data to access
+while True:
+    Site_index=input('specify the index of the website to be acessed: ')
+    try:
+        Site_index=int(Site_index)
+        if 1<= Site_index<= len(Enumer_site):
+            Site_index-=1
+            break
+        else:
+            print('Invalid Index. Try Again')
+    except ValueError:
+        print('Invalid Index Type. Try Again')
+        
+Site_name=Enumer_site[Site_index][1]
+
+# filtering(on the basis of site name from user inputed index) 
+# and zipping(of specified {colomn_1 and colomn_2}) into a paired list)    
+
+paired_list=Zipper('Username','Password',Site_name)
+for j,i in enumerate(paired_list,start=1):
+    print(j,f'{Site_name}','->',i[0])
+        
+#user input of which username data to access    
+while True:
+    Name_index = input('Specify the index of the username to be accessed: ')
+    try:
+        Name_index = int(Name_index)  # Convert user input to an integer
+        if 1 <= Name_index <= len(paired_list):
+            Name_index -= 1
+            # print(Name_index)
+            break
+        else:
+            print('Invalid Index. Try Again')
+    except ValueError:
+        print('Invalid Index Type. Try Again.')
+        
+#master Key to access data        
+while True:
+    user_input = input('Input Master Key: ')
+    if user_input == 'Life After Death':
+        print(paired_list[Name_index][0], '->', Decrypter(paired_list[Name_index][1]))
+        break
+    else:
+        print("Invalid Key. Try Again.")        
 
 
-# encrypted=list(map(Encrypter,lst1))
-# decrypted=list(map(Decrypter,encrypted))
 
-# print(encrypted)
-# print(decrypted)
-# print(lst2)
-
-paired_list=list(zip(lst1,lst2))
-for i in paired_list:
-    print('Facebook.com','->',i[0],'->',i[1])
