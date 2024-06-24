@@ -1,62 +1,39 @@
-import tkinter as tk
+from tkinter import *
 from tkinter import ttk
-import serial
-import threading
 
-class SerialReader:
-    def __init__(self, port, baudrate, callback):
-        self.port = port
-        self.baudrate = baudrate
-        self.callback = callback
-        self.serial_connection = serial.Serial(self.port, self.baudrate)
-        self.running = False
+def Calculate(*args) -> None:
+    try:
+        value = float(feet.get())
+        meter.set(int(0.3048 * value * 10000.0 + 0.5)/10000.0)
+    except:
+        pass
 
-    def start(self):
-        self.running = True
-        self.thread = threading.Thread(target=self.read_serial)
-        self.thread.start()
 
-    def stop(self):
-        self.running = False
-        self.thread.join()
+root = Tk()
+root.title('Feet to meters')
 
-    def read_serial(self):
-        while self.running:
-            if self.serial_connection.in_waiting > 0:
-                line = self.serial_connection.readline().decode('utf-8').strip()
-                if "Analog reading changed: " in line:
-                    value = line.split(": ")[1]
-                    self.callback(value)
+mainframe = ttk.Frame(root,padding="10 10 10 10")
+mainframe.grid(column=0,row=0,sticky=(N,W,E,S))
 
-class App:
-    def __init__(self, root, serial_reader):
-        self.root = root
-        self.serial_reader = serial_reader
+root.columnconfigure(0,weight=2)
+root.rowconfigure(0,weight=2)
 
-        self.root.title("Analog Reading Display")
+feet=StringVar()
+feet_entry = ttk.Entry(mainframe,width=7,textvariable=feet)
+feet_entry.grid(column=2,row=1,sticky=(W,E))
+ttk.Label(mainframe,text="Feet").grid(column=3,row=1,sticky=W)
 
-        self.label = ttk.Label(root, text="Waiting for data...", font=("Helvetica", 16))
-        self.label.pack(pady=20)
 
-        self.start_button = ttk.Button(root, text="Start", command=self.start_serial)
-        self.start_button.pack(pady=10)
+meter = StringVar()
+ttk.Label(mainframe,text="is Equivalent to ").grid(column=1,row=2,sticky=E)
+meter_entry = ttk.Entry(mainframe,textvariable=meter)
+meter_entry.grid(column=2,row=2,sticky=(W,E))
+ttk.Label(mainframe,text="Meter").grid(column=3,row=2,sticky=W)
 
-        self.stop_button = ttk.Button(root, text="Stop", command=self.stop_serial)
-        self.stop_button.pack(pady=10)
 
-    def start_serial(self):
-        self.serial_reader.start()
+ttk.Button(mainframe,text="calculate",command=Calculate).grid(row=3,column=3,sticky=(W,E))
 
-    def stop_serial(self):
-        self.serial_reader.stop()
+feet_entry.focus()
+root.bind("<Return>",Calculate)
 
-    def update_label(self, value):
-        self.label.config(text=f"Analog reading: {value}")
-
-if __name__ == "__main__":
-    serial_port = "COM8" 
-    baud_rate = 9600
-
-    root = tk.Tk()
-    app = App(root, SerialReader(serial_port, baud_rate, lambda value: root.after(0, app.update_label, value)))
-    root.mainloop()
+root.mainloop()
