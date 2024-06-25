@@ -46,15 +46,18 @@ SER5.grid(row=2, column=5,pady=10, sticky="")
 button = ttk.Button(mainframe,text= "Get Value")
 button.grid(row=3,column=5,pady=20)
 
-print(serial2.get())
-
 for child in mainframe.winfo_children():
     child.grid_configure(padx=20)
+
+# print(serial2.get())
+########################################################
+########################################################
+########################################################
+########################################################
+
     
 ser = serial.Serial("COM8",9600)
 time.sleep(2)
-
-
 try:
     print("Started Logging")
     test =[0,0,0,0,0]
