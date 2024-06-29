@@ -24,7 +24,7 @@ label = tk.Label(root, text="Waiting for data...", font=("Helvetica", 48))
 label.pack(pady=20)
 
 # Set up the serial port
-ser = serial.Serial('COM8', 9600, timeout=1)
+ser = serial.Serial('COM8', 9600)
 
 # Start reading from the serial port
 start_reading()
