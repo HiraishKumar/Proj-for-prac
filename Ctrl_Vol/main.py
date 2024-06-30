@@ -1,8 +1,48 @@
 from tkinter import *
 from tkinter import ttk
 import serial
+import serial.tools.list_ports
 import threading
+from input import AudioController
 
+process_name = "firefox.exe" 
+audio_controller = AudioController(process_name)
+
+current_volume = audio_controller.process_volume()
+print(f"Current volume for {process_name}: {current_volume}")
+
+def find_port():
+    # Get a list of all available serial ports.
+    ports = serial.tools.list_ports.comports()
+
+    # print("The following serial ports were found:")
+    for port in ports:
+        if port.description.find("CH340") != -1 or port.description.find("Arduino") != -1:
+            # print(f"Device: {port.device}, Description: {port.description}")
+            print(f"the port connected to {port.device}")
+            return port.device
+
+def readSerial():
+    print("Started Logging")
+    while True:
+        if ser.in_waiting > 0:
+            line = ser.readline().decode('utf-8').strip()
+            test = [int(i)//10 if 0 <= int(i) < 1000 else 100 for i in line.split("|")]
+            # print(test)
+            new_volume = float(test[0]/100 )
+            audio_controller.set_volume(new_volume)
+            print(f"New volume for {process_name} set to {new_volume}")
+            for num,item in enumerate(serials):
+                item.set(test[num])
+            
+            for num,item in enumerate(sliders):
+                item.set(value=test[num])
+
+def startReading():
+    thread =threading.Thread(target=readSerial)
+    thread.daemon=True
+    thread.start()
+               
 root = Tk()
 root.title("Serial Reader")
 root.geometry("500x500")
@@ -34,27 +74,7 @@ for i in range(1,6):
 for child in mainframe.winfo_children():
     child.grid_configure(padx=20)
 
-def readSerial():
-    print("Started Logging")
-    while True:
-        if ser.in_waiting > 0:
-            line = ser.readline().decode('utf-8').strip()
-            test = [int(i)//10 if 0 <= int(i) < 1000 else 100 for i in line.split("|")]
-            print(test)
-
-            for num,item in enumerate(serials):
-                item.set(test[num])
-            
-            for num,item in enumerate(sliders):
-                item.set(value=test[num])
-            # print("\n".join([f"serial {i+1} is {j}" for i,j in enumerate(test)]))
-
-def startReading():
-    thread =threading.Thread(target=readSerial)
-    thread.daemon=True
-    thread.start()
-
-ser = serial.Serial("COM8",9600)
+ser = serial.Serial(find_port(),9600)
 
 startReading()
 
