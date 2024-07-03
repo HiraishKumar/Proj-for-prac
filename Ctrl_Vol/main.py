@@ -21,6 +21,8 @@ def find_port():
             return port.device
 
 process_name_2 = "firefox.exe" 
+
+
 process_name_3 = "Spotify.exe" 
 process_name_4 = "Discord.exe"
 audio_controller_2 = AudioController(process_name_2)
