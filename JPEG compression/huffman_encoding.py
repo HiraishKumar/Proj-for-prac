@@ -33,6 +33,7 @@ def generate_huffman_codes(node, code="", huffman_codes={}):
         if node.symbol is not None:
             huffman_codes[node.symbol] = code
         generate_huffman_codes(node.left, code + "0", huffman_codes)
+        
         generate_huffman_codes(node.right, code + "1", huffman_codes)
 
     return huffman_codes
