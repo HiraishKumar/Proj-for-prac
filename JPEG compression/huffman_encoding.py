@@ -38,7 +38,7 @@ def generate_huffman_codes(node, code="", huffman_codes={}):
 
     return huffman_codes
 
-# Given example
+
 chars = ['a', 'b', 'c', 'd', 'e', 'f']
 freq = [4, 7, 15, 17, 22, 42]
 
